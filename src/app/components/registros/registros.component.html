@@ -1,0 +1,161 @@
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1>Lista de registros</h1>
+        <button routerLink="/registro/new" class="btn btn-primary">Añadir</button>
+    </div>
+    <div class="d-flex justify-content-end mb-3 align-items-center">
+        <form [formGroup]="query">
+            <input placeholder="Escriba aqui para buscar" formControlName="texto" type="text" class="form-control">
+        </form>
+        <button class="btn btn-primary ms-1" (click)="buscar()">
+            Buscar
+        </button>
+    </div>
+    <div class="table-responsive">
+        <table class="table text-left" *ngIf="!cargando && registros.length > 0">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Primer Nombre</th>
+                    <th>Primer Apellido</th>
+                    <th>Area</th>
+                    <th>Pais</th>
+                    <th>Fecha Ingreso</th>
+                    <th>Estado</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let item of registros | paginate: config, let i=index">
+                    <td>{{item.prinom}}</td>
+                    <td>{{item.priap}}</td>
+                    <td>{{item.area}}</td>
+                    <td>{{item.pais}}</td>
+                    <td>{{item.fechain | date: 'dd-MM-YYYY'}}</td>
+                    <td>
+                        <label title="Este producto esta activo" *ngIf="item.estado" class="badge bg-success">Activo</label>
+                        <label title="Este producto esta inactivo" *ngIf="!item.estado" class="badge bg-danger">Inactivo</label>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="text-center m-3">
+        <pagination-controls (pageChange)="pageChanged($event)"></pagination-controls>
+    </div>
+    <div *ngIf="consulta" class="container-fluid">
+        <div class="row align-items-center">
+            <div class="col-sm-4 text-center ">
+                <div class="card" style="width: 18rem;">
+                    <div class="card-body">
+                        <h5 class="card-title">Nombre completo:</h5>
+                        <h5 class="card-title">{{consulta.prinom}} {{consulta.otrosnom}} {{consulta.priap}} {{consulta.segap}}</h5>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">Area: {{consulta.area}}</li>
+                        <li class="list-group-item">Pais servicio: {{consulta.pais}}</li>
+                        <li class="list-group-item">Identificacion: {{consulta.numid}}/{{consulta.tipoid}}</li>
+                        <li class="list-group-item">Fecha ingreso: {{consulta.fechain | date: 'dd-MM-YYYY'}}</li>
+                        <li class="list-group-item">Fecha registro: {{consulta.fechareg.toDate() | date: 'dd-MM-YYYY HH:mm:ss'}}</li>
+                        <li class="list-group-item">{{consulta.correo}}</li>
+                        <li class="list-group-item">
+                            <label title="Este producto esta activo" *ngIf="consulta.estado" class="badge bg-success">Activo</label>
+                            <label title="Este producto esta inactivo" *ngIf="!consulta.estado" class="badge bg-danger">Inactivo</label>
+                        </li>
+                    </ul>
+                    <div class="card-body">
+                        <button class="btn btn-primary m-1" (click)='toggleEditar()'>Editar</button>
+                        <button class="btn btn-danger m-1" (click)='eliminar()'>Delete</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-8 mt-3">
+                <form *ngIf="editar" [formGroup]="formaEditar">
+                    <div class="row">
+                        <div class="mb-3 form-group col-sm">
+                            <label class="form-label">Primer Nombre</label>
+                            <input class="form-control" type="text" placeholder="Maximo 20 caracteres en mayusculas, sin acentos ni ñ" formControlName="prinom" [class.is-invalid]="prinomInvalid">
+                            <small *ngIf="prinomInvalid">Verifique este campo</small>
+                        </div>
+                        <div class="mb-3 form-group col-sm">
+                            <label class="form-label">Otros Nombres</label>
+                            <input class="form-control" type="text" placeholder="Maximo 50 caracteres en mayusculas, sin acentos ni ñ" formControlName="otrosnom" [class.is-invalid]="otrosnomInvalid">
+                            <small *ngIf="otrosnomInvalid">Verifique este campo</small>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="mb-3 form-group col-sm">
+                            <label class="form-label">Primer Apellido</label>
+                            <input class="form-control" type="text" placeholder="Maximo 20 caracteres en mayusculas, sin acentos ni ñ" formControlName="priap" [class.is-invalid]="priapInvalid">
+                            <small *ngIf="priapInvalid">Verifique este campo</small>
+                        </div>
+                        <div class="mb-3 form-group col-sm">
+                            <label class="form-label">Segundo Apellido</label>
+                            <input class="form-control" type="text" placeholder="Maximo 20 caracteres en mayusculas, sin acentos ni ñ" formControlName="segap" [class.is-invalid]="segapInvalid">
+                            <small *ngIf="segapInvalid">Verifique este campo</small>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="mb-3 form-group col-sm">
+                            <label class="form-label">Pais</label>
+                            <select class="form-select" name="pais" formControlName="pais" [class.is-invalid]="paisInvalid">
+                          <option value="Colombia">Colombia</option>
+                          <option value="Estados Unidos">Estados Unidos</option>
+                      </select>
+                            <small *ngIf="paisInvalid">Verifique este campo</small>
+                        </div>
+                        <div class="mb-3 form-group col-sm">
+                            <label class="form-label">Tipo de Identificacion</label>
+                            <select class="form-select" formControlName="tipoid" [class.is-invalid]="tipoidInvalid">
+                                <option value="Cédula de Ciudadanía">Cédula de Ciudadanía</option>
+                                <option value="Cédula de Extranjería">Cédula de Extranjería</option>
+                                <option value="Pasaporte">Pasaporte</option>
+                                <option value="Permiso Especial">Permiso Especial</option>
+                            </select>
+                            <small *ngIf="tipoidInvalid">Verifique este campo</small>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="mb-3 form-group col-sm">
+                            <label class="form-label">Numero de Identificacion</label>
+                            <input class="form-control" type="text" placeholder="Maximo 20 caracteres sin acentos ni ñ" formControlName="numid" [class.is-invalid]="numidInvalid">
+                            <small *ngIf="numidInvalid">Verifique este campo</small>
+                        </div>
+                        <div class="mb-3 form-group col-sm">
+                            <label class="form-label">Fecha de ingreso</label>
+                            <input class="form-control" type="date" formControlName="fechain" [class.is-invalid]="fechainInvalid">
+                            <small *ngIf="fechainInvalid">Verifique este campo</small>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="mb-3 form-group col-sm">
+                            <label class="form-label">Área</label>
+                            <select class="form-select" formControlName="area" [class.is-invalid]="areaInvalid">
+                                <option value="Administración" selected>Administración</option>
+                                <option value="Financiera">Financiera</option>
+                                <option value="Compras">Compras</option>
+                                <option value="Infraestructura">Infraestructura</option>
+                                <option value="Operación">Operación</option>
+                                <option value="Talento Humano">Talento Humano</option>
+                                <option value="Servicios Varios">Servicios Varios</option>
+                            </select>
+                            <small *ngIf="areaInvalid">Verifique este campo</small>
+                        </div>
+                    </div>
+                    <div class="col text-center">
+                        <button class="btn btn-primary w-25" (click)="editarReg()">
+                            Editar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <h1>{{mensaje || null}}</h1>
+    <h1>{{mensaje2 || null}}</h1>
+    <div class="alert alert-info text-center mtb-3" *ngIf="cargando">
+        <h2 class="alert-heading">Cargando</h2>
+        <p class="fs-5">Espere por favor</p>
+    </div>
+    <div class="alert alert-warning text-center mtb-3 pb-2" *ngIf="!cargando && registros.length == 0">
+        <h2 class="alert-heading">No hay registros</h2>
+    </div>
+</div>

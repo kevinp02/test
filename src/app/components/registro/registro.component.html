@@ -1,0 +1,83 @@
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1>Registrar nuevo</h1>
+        <a routerLink="/lista" class="btn btn-danger">Volver</a>
+    </div>
+    <form [formGroup]="registrar">
+        <div class="row">
+            <div class="mb-3 form-group col-sm">
+                <label class="form-label">Primer Nombre</label>
+                <input class="form-control" type="text" placeholder="Maximo 20 caracteres en mayusculas, sin acentos ni ñ" formControlName="prinom" [class.is-invalid]="prinomInvalid">
+                <small *ngIf="prinomInvalid">Verifique este campo</small>
+            </div>
+            <div class="mb-3 form-group col-sm">
+                <label class="form-label">Otros Nombres</label>
+                <input class="form-control" type="text" placeholder="Maximo 50 caracteres en mayusculas, sin acentos ni ñ" formControlName="otrosnom" [class.is-invalid]="otrosnomInvalid">
+                <small *ngIf="otrosnomInvalid">Verifique este campo</small>
+            </div>
+        </div>
+        <div class="row">
+            <div class="mb-3 form-group col-sm">
+                <label class="form-label">Primer Apellido</label>
+                <input class="form-control" type="text" placeholder="Maximo 20 caracteres en mayusculas, sin acentos ni ñ" formControlName="priap" [class.is-invalid]="priapInvalid">
+                <small *ngIf="priapInvalid">Verifique este campo</small>
+            </div>
+            <div class="mb-3 form-group col-sm">
+                <label class="form-label">Segundo Apellido</label>
+                <input class="form-control" type="text" placeholder="Maximo 20 caracteres en mayusculas, sin acentos ni ñ" formControlName="segap" [class.is-invalid]="segapInvalid">
+                <small *ngIf="segapInvalid">Verifique este campo</small>
+            </div>
+        </div>
+        <div class="row">
+            <div class="mb-3 form-group col-sm">
+                <label class="form-label">Pais</label>
+                <select class="form-select" name="pais" formControlName="pais" [class.is-invalid]="paisInvalid">
+                  <option value="Colombia">Colombia</option>
+                  <option value="Estados Unidos">Estados Unidos</option>
+              </select>
+                <small *ngIf="paisInvalid">Verifique este campo</small>
+            </div>
+            <div class="mb-3 form-group col-sm">
+                <label class="form-label">Tipo de Identificacion</label>
+                <select class="form-select" formControlName="tipoid" [class.is-invalid]="tipoidInvalid">
+                  <option value="Cédula de Ciudadanía">Cédula de Ciudadanía</option>
+                  <option value="Cédula de Extranjería">Cédula de Extranjería</option>
+                  <option value="Pasaporte">Pasaporte</option>
+                  <option value="Permiso Especial">Permiso Especial</option>
+              </select>
+                <small *ngIf="tipoidInvalid">Verifique este campo</small>
+            </div>
+        </div>
+        <div class="row">
+            <div class="mb-3 form-group col-sm">
+                <label class="form-label">Numero de Identificacion</label>
+                <input class="form-control" type="text" placeholder="Maximo 20 caracteres sin acentos ni ñ" formControlName="numid" [class.is-invalid]="numidInvalid">
+                <small *ngIf="numidInvalid">Verifique este campo</small>
+            </div>
+            <div class="mb-3 form-group col-sm">
+                <label class="form-label">Fecha de ingreso</label>
+                <input class="form-control" type="date" formControlName="fechain" [class.is-invalid]="fechainInvalid">
+                <small *ngIf="fechainInvalid">Verifique este campo</small>
+            </div>
+        </div>
+        <div class="row">
+            <div class="mb-3 form-group col-sm">
+                <label class="form-label">Área</label>
+                <select class="form-select" formControlName="area" [class.is-invalid]="areaInvalid">
+                  <option value="Administración" selected>Administración</option>
+                  <option value="Financiera">Financiera</option>
+                  <option value="Compras">Compras</option>
+                  <option value="Infraestructura">Infraestructura</option>
+                  <option value="Operación">Operación</option>
+                  <option value="Talento Humano">Talento Humano</option>
+                  <option value="Servicios Varios">Servicios Varios</option>
+              </select>
+                <small *ngIf="areaInvalid">Verifique este campo</small>
+            </div>
+        </div>
+        <br>
+        <div class="col text-center">
+            <button (click)="enviar()" class="btn btn-primary w-25">Guardar</button>
+        </div>
+    </form>
+</div>
